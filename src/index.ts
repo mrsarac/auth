@@ -2,6 +2,7 @@
  * @mrsarac/auth - Unified Authentication Package
  */
 
+// Types
 export type {
   AuthConfig,
   AuthUser,
@@ -11,7 +12,27 @@ export type {
   VerifyTokenOptions,
 } from './types';
 
+// Utils
 export { createLogtoConfig } from './utils/config';
-export { verifyToken, createJWKS } from './utils/tokenVerify';
-export { syncUser, getUserByLogtoId } from './utils/userSync';
-export { DEFAULT_TOKEN_DURATIONS } from './constants';
+export { verifyToken, createJWKS, verifyTokenMultiAudience } from './utils/tokenVerify';
+export { syncUser, getUserByLogtoId, type QueryFunction } from './utils/userSync';
+
+// Constants
+export { DEFAULT_TOKEN_DURATIONS, DEFAULT_GUEST_LIMITS, STORAGE_KEYS } from './constants';
+
+// Middleware (re-export from middleware module)
+export {
+  createAuthMiddleware,
+  authMiddleware,
+  optionalAuthMiddleware,
+  type AuthenticatedRequest,
+  type AuthMiddlewareOptions,
+} from './middleware/authMiddleware';
+
+export {
+  createGuestMiddleware,
+  getGuestSession,
+  isGuestMode,
+  type GuestRequest,
+  type GuestMiddlewareOptions,
+} from './middleware/guestMode';
