@@ -1,4 +1,5 @@
 import { vi, beforeEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // Mock localStorage for browser environment tests
 let store: Record<string, string> = {};
