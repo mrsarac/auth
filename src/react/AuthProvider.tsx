@@ -56,7 +56,8 @@ export function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }:
     try {
       const targetResource = resource || apiResource;
       if (targetResource) {
-        return await logtoGetAccessToken(targetResource);
+        const token = await logtoGetAccessToken(targetResource);
+        return token ?? null;
       }
       return null;
     } catch (error) {
