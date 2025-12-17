@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { useLogto } from '@logto/react';
 import type { AuthUser } from '../types';
 import type { AuthContextValue } from './types';
+import { authLogger } from '../utils/logger';
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -32,7 +33,7 @@ export function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }:
             });
           }
         } catch (error) {
-          console.error('Failed to get user claims:', error);
+          authLogger.error('Failed to get user claims:', error);
           setUser(null);
         }
       } else {
@@ -61,7 +62,7 @@ export function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }:
       }
       return null;
     } catch (error) {
-      console.error('Failed to get access token:', error);
+      authLogger.error('Failed to get access token:', error);
       return null;
     }
   };

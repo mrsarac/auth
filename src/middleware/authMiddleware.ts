@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { verifyToken, verifyTokenMultiAudience } from '../utils/tokenVerify';
 import type { AuthUser, TokenPayload } from '../types';
+import { authLogger } from '../utils/logger';
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthUser;
@@ -45,7 +46,7 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions) {
         try {
           user.dbUserId = await getDbUserId(payload.sub);
         } catch (err) {
-          console.warn('Could not fetch local user ID:', err);
+          authLogger.warn('Could not fetch local user ID:', err);
         }
       }
 
@@ -53,7 +54,7 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions) {
       req.tokenPayload = payload;
       next();
     } catch (error) {
-      console.error('Auth middleware error:', error);
+      authLogger.error('Auth middleware error:', error);
       res.status(401).json({ error: 'Invalid or expired token' });
     }
   };

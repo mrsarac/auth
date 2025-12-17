@@ -16,6 +16,7 @@ export type {
 export { createLogtoConfig } from './utils/config';
 export { verifyToken, createJWKS, verifyTokenMultiAudience } from './utils/tokenVerify';
 export { syncUser, getUserByLogtoId, type QueryFunction } from './utils/userSync';
+export { authLogger } from './utils/logger';
 
 // Constants
 export { DEFAULT_TOKEN_DURATIONS, DEFAULT_GUEST_LIMITS, STORAGE_KEYS } from './constants';

@@ -27,6 +27,18 @@ type QueryFunction = (sql: string, params: unknown[]) => Promise<{
 declare function syncUser(query: QueryFunction, logtoId: string, email?: string, name?: string): Promise<number>;
 declare function getUserByLogtoId(query: QueryFunction, logtoId: string): Promise<AuthUser | null>;
 
+/**
+ * @mrsarac/auth - Lightweight Logger Utility
+ * Works in both browser and Node.js environments
+ * Can be silenced via AUTH_LOG_LEVEL environment variable
+ */
+declare const authLogger: {
+    debug: (message: string, ...args: unknown[]) => void;
+    info: (message: string, ...args: unknown[]) => void;
+    warn: (message: string, ...args: unknown[]) => void;
+    error: (message: string, ...args: unknown[]) => void;
+};
+
 declare const DEFAULT_TOKEN_DURATIONS: {
     readonly HIGH_SECURITY: number;
     readonly BALANCED: number;
@@ -41,4 +53,4 @@ declare const STORAGE_KEYS: {
     readonly TOKEN_DURATION_PREF: "mrsarac_token_duration";
 };
 
-export { AuthConfig, AuthUser, DEFAULT_GUEST_LIMITS, DEFAULT_TOKEN_DURATIONS, type QueryFunction, STORAGE_KEYS, TokenPayload, VerifyTokenOptions, createJWKS, createLogtoConfig, getUserByLogtoId, syncUser, verifyToken, verifyTokenMultiAudience };
+export { AuthConfig, AuthUser, DEFAULT_GUEST_LIMITS, DEFAULT_TOKEN_DURATIONS, type QueryFunction, STORAGE_KEYS, TokenPayload, VerifyTokenOptions, authLogger, createJWKS, createLogtoConfig, getUserByLogtoId, syncUser, verifyToken, verifyTokenMultiAudience };

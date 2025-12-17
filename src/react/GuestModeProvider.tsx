@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import type { GuestSession } from '../types';
 import type { GuestModeContextValue } from './types';
 import { DEFAULT_GUEST_LIMITS, STORAGE_KEYS } from '../constants';
+import { authLogger } from '../utils/logger';
 
 const GuestModeContext = createContext<GuestModeContextValue | null>(null);
 
@@ -34,7 +35,7 @@ export function GuestModeProvider({ children, maxActions = DEFAULT_GUEST_LIMITS.
         }
       }
     } catch (error) {
-      console.error('Failed to load guest session:', error);
+      authLogger.error('Failed to load guest session:', error);
     }
   }, [sessionExpiry]);
 

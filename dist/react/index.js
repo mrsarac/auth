@@ -31,6 +31,53 @@ module.exports = __toCommonJS(react_exports);
 // src/react/AuthProvider.tsx
 var import_react = require("react");
 var import_react2 = require("@logto/react");
+
+// src/utils/logger.ts
+var LOG_LEVELS = {
+  debug: 0,
+  info: 1,
+  warn: 2,
+  error: 3,
+  silent: 4
+};
+function getLogLevel() {
+  if (typeof process !== "undefined" && process.env?.AUTH_LOG_LEVEL) {
+    return process.env.AUTH_LOG_LEVEL;
+  }
+  if (typeof window !== "undefined" && window.__AUTH_LOG_LEVEL__) {
+    return window.__AUTH_LOG_LEVEL__;
+  }
+  return "warn";
+}
+function shouldLog(level) {
+  const currentLevel = getLogLevel();
+  return LOG_LEVELS[level] >= LOG_LEVELS[currentLevel];
+}
+var PREFIX = "[@mrsarac/auth]";
+var authLogger = {
+  debug: (message, ...args) => {
+    if (shouldLog("debug")) {
+      console.debug(PREFIX, message, ...args);
+    }
+  },
+  info: (message, ...args) => {
+    if (shouldLog("info")) {
+      console.info(PREFIX, message, ...args);
+    }
+  },
+  warn: (message, ...args) => {
+    if (shouldLog("warn")) {
+      console.warn(PREFIX, message, ...args);
+    }
+  },
+  error: (message, ...args) => {
+    if (shouldLog("error")) {
+      console.error(PREFIX, message, ...args);
+    }
+  }
+};
+
+// src/react/AuthProvider.tsx
 var import_jsx_runtime = require("react/jsx-runtime");
 var AuthContext = (0, import_react.createContext)(null);
 function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }) {
@@ -50,7 +97,7 @@ function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }) {
             });
           }
         } catch (error) {
-          console.error("Failed to get user claims:", error);
+          authLogger.error("Failed to get user claims:", error);
           setUser(null);
         }
       } else {
@@ -76,7 +123,7 @@ function AuthProvider({ children, apiResource, callbackUrl, signOutUrl }) {
       }
       return null;
     } catch (error) {
-      console.error("Failed to get access token:", error);
+      authLogger.error("Failed to get access token:", error);
       return null;
     }
   };
@@ -133,7 +180,7 @@ function GuestModeProvider({ children, maxActions = DEFAULT_GUEST_LIMITS.MAX_ACT
         }
       }
     } catch (error) {
-      console.error("Failed to load guest session:", error);
+      authLogger.error("Failed to load guest session:", error);
     }
   }, [sessionExpiry]);
   (0, import_react3.useEffect)(() => {

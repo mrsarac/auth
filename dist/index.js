@@ -23,6 +23,7 @@ __export(src_exports, {
   DEFAULT_GUEST_LIMITS: () => DEFAULT_GUEST_LIMITS,
   DEFAULT_TOKEN_DURATIONS: () => DEFAULT_TOKEN_DURATIONS,
   STORAGE_KEYS: () => STORAGE_KEYS,
+  authLogger: () => authLogger,
   authMiddleware: () => authMiddleware,
   createAuthMiddleware: () => createAuthMiddleware,
   createGuestMiddleware: () => createGuestMiddleware,
@@ -114,6 +115,51 @@ async function getUserByLogtoId(query, logtoId) {
   };
 }
 
+// src/utils/logger.ts
+var LOG_LEVELS = {
+  debug: 0,
+  info: 1,
+  warn: 2,
+  error: 3,
+  silent: 4
+};
+function getLogLevel() {
+  if (typeof process !== "undefined" && process.env?.AUTH_LOG_LEVEL) {
+    return process.env.AUTH_LOG_LEVEL;
+  }
+  if (typeof window !== "undefined" && window.__AUTH_LOG_LEVEL__) {
+    return window.__AUTH_LOG_LEVEL__;
+  }
+  return "warn";
+}
+function shouldLog(level) {
+  const currentLevel = getLogLevel();
+  return LOG_LEVELS[level] >= LOG_LEVELS[currentLevel];
+}
+var PREFIX = "[@mrsarac/auth]";
+var authLogger = {
+  debug: (message, ...args) => {
+    if (shouldLog("debug")) {
+      console.debug(PREFIX, message, ...args);
+    }
+  },
+  info: (message, ...args) => {
+    if (shouldLog("info")) {
+      console.info(PREFIX, message, ...args);
+    }
+  },
+  warn: (message, ...args) => {
+    if (shouldLog("warn")) {
+      console.warn(PREFIX, message, ...args);
+    }
+  },
+  error: (message, ...args) => {
+    if (shouldLog("error")) {
+      console.error(PREFIX, message, ...args);
+    }
+  }
+};
+
 // src/constants.ts
 var DEFAULT_TOKEN_DURATIONS = {
   HIGH_SECURITY: 60 * 60,
@@ -156,14 +202,14 @@ function createAuthMiddleware(options) {
         try {
           user.dbUserId = await getDbUserId(payload.sub);
         } catch (err) {
-          console.warn("Could not fetch local user ID:", err);
+          authLogger.warn("Could not fetch local user ID:", err);
         }
       }
       req.user = user;
       req.tokenPayload = payload;
       next();
     } catch (error) {
-      console.error("Auth middleware error:", error);
+      authLogger.error("Auth middleware error:", error);
       res.status(401).json({ error: "Invalid or expired token" });
     }
   };
@@ -228,6 +274,7 @@ function isGuestMode(req) {
   DEFAULT_GUEST_LIMITS,
   DEFAULT_TOKEN_DURATIONS,
   STORAGE_KEYS,
+  authLogger,
   authMiddleware,
   createAuthMiddleware,
   createGuestMiddleware,
